@@ -10,7 +10,7 @@ class UserRepository:
         cursor.execute(
             """
             INSERT INTO users 
-                (username, password, balance) 
+                (username, password, balance)
             VALUES 
                 (?, ?, ?);
             """,
