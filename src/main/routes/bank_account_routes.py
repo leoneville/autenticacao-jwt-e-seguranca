@@ -1,8 +1,29 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
+
+from src.main.composer.balance_editor_composer import balance_editor_composer
+from src.main.composer.login_creator_composer import login_creator_composer
+from src.main.composer.user_register_composer import user_register_composer
+from src.views.http_types.http_request import HttpRequest
 
 bank_routes_bp = Blueprint("bank_routes", __name__)
 
 
-@bank_routes_bp.get("/")
-def hello():
-    return jsonify(Hello="World"), 200
+@bank_routes_bp.post("/bank/registry")
+def registry_user():
+    http_request = HttpRequest(body=request.json)
+    http_response = user_register_composer().handle(http_request)
+    return jsonify(http_response.body), http_response.status_code
+
+
+@bank_routes_bp.post("/bank/login")
+def create_login():
+    http_request = HttpRequest(body=request.json)
+    http_response = login_creator_composer().handle(http_request)
+    return jsonify(http_response.body), http_response.status_code
+
+
+@bank_routes_bp.patch("/bank/balance/<int:user_id>")
+def edit_balance(user_id: int):
+    http_request = HttpRequest(body=request.json, params={"user_id": user_id})
+    http_response = balance_editor_composer().handle(http_request)
+    return jsonify(http_response.body), http_response.status_code
